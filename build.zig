@@ -1,5 +1,5 @@
 const std = @import("std");
-const deps = @import("./deps.zig");
+// const deps = @import("./deps.zig");
 
 pub fn build(b: *std.build.Builder) void {
     // Standard target options allows the person running `zig build` to choose
@@ -15,7 +15,7 @@ pub fn build(b: *std.build.Builder) void {
     const exe = b.addExecutable("nyancat.zig", "src/main.zig");
     exe.setTarget(target);
     exe.setBuildMode(mode);
-    deps.addAllTo(exe);
+    // deps.addAllTo(exe);
     exe.install();
 
     const run_cmd = exe.run();
