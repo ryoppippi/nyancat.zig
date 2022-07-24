@@ -2,6 +2,8 @@
 
 Nyancat written in Zig
 
+![Screenshot](/screenshot/screenshot.gif)
+
 ## How to execute
 
 ```sh
