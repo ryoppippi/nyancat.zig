@@ -3,9 +3,12 @@ const utils = @import("utils.zig");
 const content = @embedFile("assets/frames.json");
 
 const output_char = "  ";
-const defualt_term_info = [2]u8{ 60, 60 };
+const default_term_info = if (utils.is_windows) [2]u8{ 24, 80 } else [2]u8{ 60, 60 };
 
 pub fn main() anyerror!void {
+    utils.term_init();
+    defer utils.term_finish();
+
     var writer = std.io.getStdOut().writer();
     const print = writer.print;
 
@@ -14,7 +17,7 @@ pub fn main() anyerror!void {
     defer p.deinit();
     var data = (p.parse(content) catch unreachable).root;
 
-    var term_info: [2]u8 = utils.getTermSize(allocator, "/tmp/.stty.nyan") catch defualt_term_info;
+    var term_info: [2]u8 = if (utils.is_windows) default_term_info else utils.getTermSize(allocator, "/tmp/.stty.nyan") catch default_term_info;
     const term_width = term_info[1] / output_char.len;
     const term_height = term_info[0];
 
@@ -48,7 +51,7 @@ pub fn main() anyerror!void {
 }
 
 const ESC = "\x1b";
-const NEW_SCREEN = ESC ++ "\u{67}" ++ ESC ++ "[?47h";
+const NEW_SCREEN = ESC ++ "\u{67}" ++ ESC ++ "[0;0H" ++ ESC ++ "[2J" ++ ESC ++ "[?47h";
 const CLEAR_SCREEN = ESC ++ "[H";
 const EXIT_SCREEN = ESC ++ "[?47l" ++ ESC ++ "\u{70}";
 const NEW_LINE = ESC ++ "[m" ++ "\n";

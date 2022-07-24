@@ -1,4 +1,5 @@
 const std = @import("std");
+const builtin = @import("builtin");
 const fmt = std.fmt;
 const os = std.os;
 const mem = std.mem;
@@ -91,5 +92,36 @@ pub fn main() !void {
     std.debug.print("\n", .{});
     for (re) |r| {
         std.debug.print("{}\n", .{r});
+    }
+}
+
+pub const is_windows = builtin.os.tag == .windows;
+
+pub const w32 = if (is_windows) struct {
+    const WINAPI = std.os.windows.WINAPI;
+    const DWORD = std.os.windows.DWORD;
+    const ENABLE_VIRTUAL_TERMINAL_PROCESSING = 0x0004;
+    const STD_ERROR_HANDLE = @bitCast(DWORD, @as(i32, -12));
+    extern "kernel32" fn GetStdHandle(id: DWORD) callconv(WINAPI) ?*anyopaque;
+    extern "kernel32" fn GetConsoleMode(console: ?*anyopaque, out_mode: *DWORD) callconv(WINAPI) u32;
+    extern "kernel32" fn SetConsoleMode(console: ?*anyopaque, mode: DWORD) callconv(WINAPI) u32;
+} else undefined;
+
+var w32_handle: ?*anyopaque = undefined;
+var w32_mode: if (is_windows) w32.DWORD else void = undefined;
+
+pub fn term_init() void {
+    if (builtin.os.tag == .windows) {
+        w32_handle = w32.GetStdHandle(w32.STD_ERROR_HANDLE);
+        if (w32.GetConsoleMode(w32_handle, &w32_mode) != 0) {
+            w32_mode |= w32.ENABLE_VIRTUAL_TERMINAL_PROCESSING;
+            w32_mode = w32.SetConsoleMode(w32_handle, w32_mode);
+        }
+    }
+}
+
+pub fn term_finish() void {
+    if (builtin.os.tag == .windows) {
+        _ = w32.SetConsoleMode(w32_handle, w32_mode);
     }
 }
