@@ -38,10 +38,10 @@ pub fn getTermSize(allocator: std.mem.Allocator, filename: []const u8) ![2]u8 {
 
         // Execute command, replacing child process!
         const result = std.os.execvpeZ(args_ptrs[0].?, &args_ptrs, &env);
+        _ = result;
 
         // If we make it this far, the exec() call has failed!
         // try stdout.print(" {}\n", .{result});
-        std.log.info("{}", .{result});
         return return_array;
     } else { // We are the parent.
 
