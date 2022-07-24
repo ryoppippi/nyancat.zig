@@ -3,7 +3,7 @@ const utils = @import("utils.zig");
 const content = @embedFile("assets/frames.json");
 
 const output_char = "  ";
-const default_term_info = if (utils.is_windows) [2]u8{ 24, 80 } else [2]u8{ 60, 60 };
+const default_term_info = if (utils.is_windows) [2]u32{ 24, 80 } else [2]u32{ 60, 60 };
 
 pub fn main() anyerror!void {
     utils.term_init();
@@ -17,7 +17,7 @@ pub fn main() anyerror!void {
     defer p.deinit();
     var data = (p.parse(content) catch unreachable).root;
 
-    var term_info: [2]u8 = if (utils.is_windows) default_term_info else utils.getTermSize(allocator, "/tmp/.stty.nyan") catch default_term_info;
+    var term_info: [2]u32 = if (utils.is_windows) default_term_info else utils.getTermSize(allocator, "/tmp/.stty.nyan") catch default_term_info;
     const term_width = term_info[1] / output_char.len;
     const term_height = term_info[0];
 
@@ -25,10 +25,10 @@ pub fn main() anyerror!void {
     const frame_col = frame_row;
 
     const min_row = if (frame_row > term_height) (frame_row - term_height) / 2 else 0;
-    const max_row = if (frame_row > term_height) min_row + term_height else frame_row;
+    const max_row = if (frame_row > term_height) min_row +| term_height else frame_row;
 
     const min_col = if (frame_col > term_width) (frame_col - term_width) / 2 else 0;
-    const max_col = if (frame_col > term_width) min_col + term_width else frame_col;
+    const max_col = if (frame_col > term_width) min_col +| term_width else frame_col;
 
     try print("{s}", .{NEW_SCREEN});
     var kk: i32 = 0;

@@ -5,9 +5,9 @@ const os = std.os;
 const mem = std.mem;
 const ArrayList = std.ArrayList;
 
-var return_array = mem.zeroes([2]u8);
+var return_array = mem.zeroes([2]u32);
 
-pub fn getTermSize(allocator: std.mem.Allocator, filename: []const u8) ![2]u8 {
+pub fn getTermSize(allocator: std.mem.Allocator, filename: []const u8) ![2]u32 {
     var tokens = std.mem.split(u8, "stty size", " ");
     var args: [10][20:0]u8 = undefined;
     var args_ptrs: [10:null]?[*:0]u8 = undefined;
