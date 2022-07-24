@@ -3,7 +3,7 @@ const utils = @import("utils.zig");
 const content = @embedFile("assets/frames.json");
 
 const output_char = "  ";
-const defualt_term_info = [2]u8{ 60, 60 };
+const default_term_info = [2]u8{ 60, 60 };
 
 pub fn main() anyerror!void {
     var writer = std.io.getStdOut().writer();
@@ -14,7 +14,7 @@ pub fn main() anyerror!void {
     defer p.deinit();
     var data = (p.parse(content) catch unreachable).root;
 
-    var term_info: [2]u8 = utils.getTermSize(allocator, "/tmp/.stty.nyan") catch defualt_term_info;
+    var term_info: [2]u8 = utils.getTermSize(allocator, "/tmp/.stty.nyan") catch default_term_info;
     const term_width = term_info[1] / output_char.len;
     const term_height = term_info[0];
 
