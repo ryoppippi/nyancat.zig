@@ -58,21 +58,23 @@ const NEW_LINE = ESC ++ "[m" ++ "\n";
 
 fn convertColors(s: u8) []const u8 {
     return switch (s) {
-        '+' => ESC ++ "[48;5;226m" ++ output_char,
-        '@' => ESC ++ "[48;5;223m" ++ output_char,
-        ',' => ESC ++ "[48;5;17m" ++ output_char,
-        '-' => ESC ++ "[48;5;205m" ++ output_char,
-        '#' => ESC ++ "[48;5;82m" ++ output_char,
-        '.' => ESC ++ "[48;5;15m" ++ output_char,
-        '$' => ESC ++ "[48;5;219m" ++ output_char,
-        '%' => ESC ++ "[48;5;217m" ++ output_char,
-        ';' => ESC ++ "[48;5;99m" ++ output_char,
-        '&' => ESC ++ "[48;5;214m" ++ output_char,
-        '=' => ESC ++ "[48;5;39m" ++ output_char,
-        '\'' => ESC ++ "[48;5;0m" ++ output_char,
-        '>' => ESC ++ "[48;5;196m" ++ output_char,
-        '*' => ESC ++ "[48;5;245m" ++ output_char,
+        // zig fmt: off
+        '+'  =>  ESC  ++ "[48;5;226m" ++ output_char,
+        '@'  =>  ESC  ++ "[48;5;223m" ++ output_char,
+        ','  =>  ESC  ++ "[48;5;17m"  ++ output_char,
+        '-'  =>  ESC  ++ "[48;5;205m" ++ output_char,
+        '#'  =>  ESC  ++ "[48;5;82m"  ++ output_char,
+        '.'  =>  ESC  ++ "[48;5;15m"  ++ output_char,
+        '$'  =>  ESC  ++ "[48;5;219m" ++ output_char,
+        '%'  =>  ESC  ++ "[48;5;217m" ++ output_char,
+        ';'  =>  ESC  ++ "[48;5;99m"  ++ output_char,
+        '&'  =>  ESC  ++ "[48;5;214m" ++ output_char,
+        '='  =>  ESC  ++ "[48;5;39m"  ++ output_char,
+        '\'' =>  ESC  ++ "[48;5;0m"   ++ output_char,
+        '>'  =>  ESC  ++ "[48;5;196m" ++ output_char,
+        '*'  =>  ESC  ++ "[48;5;245m" ++ output_char,
         else => unreachable,
+        // zig fmt: on
     };
 }
 
