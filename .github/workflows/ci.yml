@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  ci:
+  fmt:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -18,4 +18,14 @@ jobs:
           version: master
       - name: fmt
         run: zig fmt --check *.zig src/*.zig
+  ci:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: goto-bus-stop/setup-zig@v1
+        with:
+          version: master
       - run: zig build
