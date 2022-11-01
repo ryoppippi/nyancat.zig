@@ -45,7 +45,7 @@ pub fn getTermSize(allocator: std.mem.Allocator, filename: []const u8) ![2]u32 {
         return return_array;
     } else { // We are the parent.
 
-        const wait_result = await async std.os.waitpid(fork_pid, 0);
+        const wait_result = std.os.waitpid(fork_pid, 0);
 
         if (wait_result.status != 0) {
             // try stdout.print("Command returned {}.\n", .{wait_result.status});

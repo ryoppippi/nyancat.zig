@@ -1,4 +1,5 @@
 const std = @import("std");
+const writer = std.io.getStdOut().writer();
 const utils = @import("utils.zig");
 const content = @embedFile("assets/frames.json");
 
@@ -8,9 +9,6 @@ const default_term_info = if (utils.is_windows) [2]u32{ 24, 80 } else [2]u32{ 60
 pub fn main() anyerror!void {
     utils.term_init();
     defer utils.term_finish();
-
-    var writer = std.io.getStdOut().writer();
-    const print = writer.print;
 
     var allocator = std.heap.page_allocator;
     var p = std.json.Parser.init(allocator, false);
@@ -30,21 +28,19 @@ pub fn main() anyerror!void {
     const min_col = if (frame_col > term_width) (frame_col - term_width) / 2 else 0;
     const max_col = if (frame_col > term_width) min_col +| term_width else frame_col;
 
-    try print("{s}", .{NEW_SCREEN});
-    var kk: i32 = 0;
+    try writer.print("{s}", .{NEW_SCREEN});
 
     while (true) {
-        kk += 1;
         for (data.Array.items) |frames| {
             for (frames.Array.items[min_row..max_row]) |row| {
                 for (row.String[min_col..max_col]) |char| {
-                    try print("{s}", .{convertColors(char)});
+                    try writer.print("{s}", .{convertColors(char)});
                 } else {
-                    try print("{s}", .{NEW_LINE});
+                    try writer.print("{s}", .{NEW_LINE});
                 }
             }
-            try print("{s}", .{CLEAR_SCREEN});
-            try print("{s}", .{EXIT_SCREEN});
+            try writer.print("{s}", .{CLEAR_SCREEN});
+            try writer.print("{s}", .{EXIT_SCREEN});
             std.time.sleep(60 * std.time.ns_per_ms);
         }
     }
@@ -59,29 +55,25 @@ const NEW_LINE = ESC ++ "[m" ++ "\n";
 fn convertColors(s: u8) []const u8 {
     return switch (s) {
         // zig fmt: off
-        '+'  =>  ESC  ++ "[48;5;226m" ++ output_char,
-        '@'  =>  ESC  ++ "[48;5;223m" ++ output_char,
-        ','  =>  ESC  ++ "[48;5;17m"  ++ output_char,
-        '-'  =>  ESC  ++ "[48;5;205m" ++ output_char,
-        '#'  =>  ESC  ++ "[48;5;82m"  ++ output_char,
-        '.'  =>  ESC  ++ "[48;5;15m"  ++ output_char,
-        '$'  =>  ESC  ++ "[48;5;219m" ++ output_char,
-        '%'  =>  ESC  ++ "[48;5;217m" ++ output_char,
-        ';'  =>  ESC  ++ "[48;5;99m"  ++ output_char,
-        '&'  =>  ESC  ++ "[48;5;214m" ++ output_char,
-        '='  =>  ESC  ++ "[48;5;39m"  ++ output_char,
-        '\'' =>  ESC  ++ "[48;5;0m"   ++ output_char,
-        '>'  =>  ESC  ++ "[48;5;196m" ++ output_char,
-        '*'  =>  ESC  ++ "[48;5;245m" ++ output_char,
+        '+'  => makeTermString(226),
+        '@'  => makeTermString(223),
+        ','  => makeTermString(17),
+        '-'  => makeTermString(205),
+        '#'  => makeTermString(82),
+        '.'  => makeTermString(15),
+        '$'  => makeTermString(219),
+        '%'  => makeTermString(217),
+        ';'  => makeTermString(99),
+        '&'  => makeTermString(214),
+        '='  => makeTermString(39),
+        '\'' => makeTermString(0),
+        '>'  => makeTermString(196),
+        '*'  => makeTermString(245),
         else => unreachable,
         // zig fmt: on
     };
 }
 
-test "a" {
-    comptime var writer = std.io.getStdOut().writer();
-    try writer.print("{s}", .{convertColors('*')});
-    try writer.print("{s}", .{convertColors('%')});
-    try writer.print("{s}", .{convertColors(' ')});
-    try writer.print("\n", .{});
+fn makeTermString(comptime s: u32) []const u8 {
+    return std.fmt.comptimePrint(ESC ++ "[48;5;{}m" ++ output_char, .{s});
 }

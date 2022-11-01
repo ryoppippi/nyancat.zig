@@ -16,7 +16,6 @@ pub fn build(b: *std.build.Builder) void {
     exe.setTarget(target);
     exe.setBuildMode(mode);
     // deps.addAllTo(exe);
-    exe.use_stage1 = true;
     exe.install();
 
     const run_cmd = exe.run();
