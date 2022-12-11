@@ -1,7 +1,8 @@
 const std = @import("std");
-const writer = std.io.getStdOut().writer();
 const utils = @import("utils.zig");
 const content = @embedFile("assets/frames.json");
+
+var writer = std.io.getStdOut().writer();
 
 const output_char = "  ";
 const default_term_info = if (utils.is_windows) [2]u32{ 24, 80 } else [2]u32{ 60, 60 };
